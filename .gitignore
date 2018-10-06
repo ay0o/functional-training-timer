@@ -1,0 +1,9 @@
+*.pyc
+*.log
+.DS_Store
+custom_settings.yaml
+local_settings.yaml
+venv
+virtualenv
+.venv
+.virtualenv
