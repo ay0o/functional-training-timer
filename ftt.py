@@ -1,34 +1,44 @@
-import pygame
+import argparse
 import time
+import pygame
 
 
-pygame.mixer.init()
-countdown = pygame.mixer.Sound('sounds/countdown.wav')
-beep = pygame.mixer.Sound('sounds/beep.wav')
-start = pygame.mixer.Sound('sounds/start.wav')
-end = pygame.mixer.Sound('sounds/end.wav')
+def parse_args():
+    parser = argparse.ArgumentParser(description='Functional Training Timer',
+                                     usage='python ftt.py -n WORKOUTS -t TIME -r REST')
+    required = parser.add_argument_group('required_arguments')
+    required.add_argument('-n', help='Number of workouts', action='store', required=True, type=int)
+    required.add_argument('-t', help='Time per workout', action='store', required=True, type=int)
+    required.add_argument('-r', help='Rest time between workouts', action='store', required=True, type=int)
+    return parser.parse_args()
 
-exercises = int(input("Number of exercises: "))
-duration = int(input("Duration of each exercise (in seconds): "))
-rounds = int(input("Number of rounds: "))
-if rounds > 1:
-    rest_time = int(input("Rest time (in seconds): "))
 
-for i in range(1, rounds + 1):
+def main():
+    args = parse_args()
+    workouts = args.n
+    workout_time = args.t
+    rest_time = args.r
+
+    pygame.mixer.init()
+    countdown = pygame.mixer.Sound('sounds/countdown.wav')
+    beep = pygame.mixer.Sound('sounds/beep.wav')
+    start = pygame.mixer.Sound('sounds/start.wav')
+    end = pygame.mixer.Sound('sounds/end.wav')
+
     countdown.play()
     time.sleep(5)
-    print("Round {} starts!".format(str(i)))
-    start.play()
-    for j in range(1, exercises + 1):
-        time.sleep(duration)
-        print("Exercise {} finished".format(str(j)))
-        # Play a beep for change of exercise. If last one, beep won't be played
-        if j < exercises:
+    for i in range(1, workouts + 1):
+        start.play()
+        print(f'Workout: {i}')
+        time.sleep(workout_time)
+        # Don't play beep nor wait rest time on last workout
+        if i < workouts:
             beep.play()
+            time.sleep(rest_time)
+
     end.play()
-    print("Round {} over!\n".format(str(i)))
-    if i < rounds:
-        time.sleep(rest_time)
-    else:
-        # 2 secs delay at the end to hear the end sound.
-        time.sleep(2)
+    time.sleep(2)
+
+
+if __name__ == '__main__':
+    main()
